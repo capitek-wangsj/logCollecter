@@ -1,1 +1,3 @@
+pika
+potsdb
 tensorflow==1.6.0
