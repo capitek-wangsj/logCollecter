@@ -1,0 +1,21 @@
+017908002018030720180307123004201803071239550000000020
+0	1520397004	3	0	172.16.31.182	ssid	nas-location	vlan-id	auth-algo-type	connect-progress	0	2940	zhaolk	2830C2AEA06E793EB938009D53DA79E5	20885407	7893976	0	0	0	disc-cause-ext	5	0	1	172.17.0.218	5	0	0	0	0
+1	1520397055	3	0	172.18.0.59	ssid	nas-location	vlan-id	auth-algo-type	connect-progress	0	2820	wangsj	4BADCE28818D320A18D609C122A04B3A	9233512	1711461	0	0	0	disc-cause-ext	5	0	2	172.17.0.218	5	0	0	0	0
+2	1520397065	3	0	172.16.31.182	ssid	nas-location	vlan-id	auth-algo-type	connect-progress	0	3000	zhaolk	2830C2AEA06E793EB938009D53DA79E5	21778729	8296516	0	0	0	disc-cause-ext	5	0	1	172.17.0.218	5	0	0	0	0
+3	1520397114	3	0	172.18.0.59	ssid	nas-location	vlan-id	auth-algo-type	connect-progress	0	2880	wangsj	4BADCE28818D320A18D609C122A04B3A	9248800	1725217	0	0	0	disc-cause-ext	5	0	2	172.17.0.218	5	0	0	0	0
+4	1520397124	3	0	172.16.31.182	ssid	nas-location	vlan-id	auth-algo-type	connect-progress	0	3060	zhaolk	2830C2AEA06E793EB938009D53DA79E5	22258856	8611831	0	0	0	disc-cause-ext	5	0	1	172.17.0.218	5	0	0	0	0
+5	1520397174	3	0	172.18.0.59	ssid	nas-location	vlan-id	auth-algo-type	connect-progress	0	2940	wangsj	4BADCE28818D320A18D609C122A04B3A	9287113	1746779	0	0	0	disc-cause-ext	5	0	2	172.17.0.218	5	0	0	0	0
+6	1520397185	3	0	172.16.31.182	ssid	nas-location	vlan-id	auth-algo-type	connect-progress	0	3120	zhaolk	2830C2AEA06E793EB938009D53DA79E5	23062378	8896571	0	0	0	disc-cause-ext	5	0	1	172.17.0.218	5	0	0	0	0
+7	1520397235	3	0	172.18.0.59	ssid	nas-location	vlan-id	auth-algo-type	connect-progress	0	3000	wangsj	4BADCE28818D320A18D609C122A04B3A	9299745	1758811	0	0	0	disc-cause-ext	5	0	2	172.17.0.218	5	0	0	0	0
+8	1520397245	3	0	172.16.31.182	ssid	nas-location	vlan-id	auth-algo-type	connect-progress	0	3180	zhaolk	2830C2AEA06E793EB938009D53DA79E5	24758241	9423992	0	0	0	disc-cause-ext	5	0	1	172.17.0.218	5	0	0	0	0
+9	1520397294	3	0	172.18.0.59	ssid	nas-location	vlan-id	auth-algo-type	connect-progress	0	3060	wangsj	4BADCE28818D320A18D609C122A04B3A	9307404	1767818	0	0	0	disc-cause-ext	5	0	2	172.17.0.218	5	0	0	0	0
+10	1520397304	3	0	172.16.31.182	ssid	nas-location	vlan-id	auth-algo-type	connect-progress	0	3240	zhaolk	2830C2AEA06E793EB938009D53DA79E5	25137412	9664171	0	0	0	disc-cause-ext	5	0	1	172.17.0.218	5	0	0	0	0
+11	1520397355	3	0	172.18.0.59	ssid	nas-location	vlan-id	auth-algo-type	connect-progress	0	3120	wangsj	4BADCE28818D320A18D609C122A04B3A	9319472	1780317	0	0	0	disc-cause-ext	5	0	2	172.17.0.218	5	0	0	0	0
+12	1520397365	3	0	172.16.31.182	ssid	nas-location	vlan-id	auth-algo-type	connect-progress	0	3300	zhaolk	2830C2AEA06E793EB938009D53DA79E5	25782022	10084008	0	0	0	disc-cause-ext	5	0	1	172.17.0.218	5	0	0	0	0
+13	1520397415	3	0	172.18.0.59	ssid	nas-location	vlan-id	auth-algo-type	connect-progress	0	3180	wangsj	4BADCE28818D320A18D609C122A04B3A	9337851	1798795	0	0	0	disc-cause-ext	5	0	2	172.17.0.218	5	0	0	0	0
+14	1520397425	3	0	172.16.31.182	ssid	nas-location	vlan-id	auth-algo-type	connect-progress	0	3360	zhaolk	2830C2AEA06E793EB938009D53DA79E5	26307458	10470614	0	0	0	disc-cause-ext	5	0	1	172.17.0.218	5	0	0	0	0
+15	1520397474	3	0	172.18.0.59	ssid	nas-location	vlan-id	auth-algo-type	connect-progress	0	3240	wangsj	4BADCE28818D320A18D609C122A04B3A	9347460	1808300	0	0	0	disc-cause-ext	5	0	2	172.17.0.218	5	0	0	0	0
+16	1520397484	3	0	172.16.31.182	ssid	nas-location	vlan-id	auth-algo-type	connect-progress	0	3420	zhaolk	2830C2AEA06E793EB938009D53DA79E5	26921455	10745211	0	0	0	disc-cause-ext	5	0	1	172.17.0.218	5	0	0	0	0
+17	1520397535	3	0	172.18.0.59	ssid	nas-location	vlan-id	auth-algo-type	connect-progress	0	3300	wangsj	4BADCE28818D320A18D609C122A04B3A	9364026	1824021	0	0	0	disc-cause-ext	5	0	2	172.17.0.218	5	0	0	0	0
+18	1520397545	3	0	172.16.31.182	ssid	nas-location	vlan-id	auth-algo-type	connect-progress	0	3480	zhaolk	2830C2AEA06E793EB938009D53DA79E5	26994555	10766736	0	0	0	disc-cause-ext	5	0	1	172.17.0.218	5	0	0	0	0
+19	1520397595	3	0	172.18.0.59	ssid	nas-location	vlan-id	auth-algo-type	connect-progress	0	3360	wangsj	4BADCE28818D320A18D609C122A04B3A	9376724	1836341	0	0	0	disc-cause-ext	5	0	2	172.17.0.218	5	0	0	0	0

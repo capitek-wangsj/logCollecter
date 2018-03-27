@@ -28,7 +28,7 @@ def main():
                         settings.MQ_QUEUE)
     dbClient = potsdb.Client(host=settings.OPENTSDB_HOST, port=settings.OPENTSDB_HOST, qsize=1000, host_tag=True, mps=100, check_host=True)
 
-    # metrics.send('test.metric5', 100, extratag1='tagvalue', extratag2='tagvalue')
+    # metrics.send('devbox.metric5', 100, extratag1='tagvalue', extratag2='tagvalue')
     # metrics.wait()
 
     if args.role == PUBLISHER:

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.capitek.com/aaa/config/acctrec acctrec.xsd" xmlns="http://www.capitek.com/aaa/config/acctrec">
+        <acctrec>
+                <parameter name="module_enable" value="yes" />
+                <parameter name="filepath" value="%A/acctrec/%{acctrec:date}%{acctrec:file_id}"/>
+                <!--
+                <parameter name="format" value="%{acctrec:record_id}\t%{Acct-Status-Type}\t%{Calling-Station-Id}\t%{Framed-IP-Address}\t%{User-Name}\t%{Acct-Session-Id}\t%{NAS-IP-Address}\t%{Acct-Output-Octets}\t%{Acct-Input-Octets}\t%{Event-Timestamp}\t%{Proxy-Type}\t%{}\t%{}"/>
+                -->
+                <parameter name="regenerate_by_time" value="yes"/>
+                <parameter name="regenerate_interval" value="10"/>
+                <parameter name="regenerate_by_size" value="no"/>
+                <parameter name="size_limit" value="30000"/>
+                <parameter name="dirperm" value="0755"/>
+                <parameter name="with_file_header" value="yes"/>
+                <parameter name="force_roam_check" value="no"/>
+                <parameter name="acct_proxied_msg" value="yes"/>
+                <parameter name="acct_unique_enable" value="no"/>
+                <parameter name="acct_unique_key_format" value="User-Name, Acct-Session-Id, NAS-IP-Address, Client-IP-Address, NAS-Port"/>
+                <fields>
+                        <parameter name="field" value="xlat:%{acctrec:record_id}"/>
+                        <parameter name="field" value="Event-Timestamp:sysdate"/>
+                        <parameter name="field" value="Acct-Status-Type:0"/>
+                        <parameter name="field" value="Called-Station-Id:0"/>
+                        <parameter name="field" value="Calling-Station-Id:0"/>
+                        <parameter name="field" value="multi:Cisco-AVPair:ssid"/>
+                        <parameter name="field" value="multi:Cisco-AVPair:nas-location"/>
+                        <parameter name="field" value="multi:Cisco-AVPair:vlan-id"/>
+                        <parameter name="field" value="multi:Cisco-AVPair:auth-algo-type"/>
+                        <parameter name="field" value="multi:Cisco-AVPair:connect-progress"/>
+                        <parameter name="field" value="Acct-Authentic:0"/>
+                        <parameter name="field" value="Acct-Session-Time:0"/>
+                        <parameter name="field" value="User-Name:"/>
+                        <parameter name="field" value="Acct-Session-Id:0"/>
+                        <parameter name="field" value="Acct-Output-Octets:0"/>
+                        <parameter name="field" value="Acct-Input-Octets:0"/>
+                        <parameter name="field" value="Acct-Output-Packets:0"/>
+                        <parameter name="field" value="Acct-Input-Packets:0"/>
+                        <parameter name="field" value="Acct-Terminate-Cause:0"/>
+                        <parameter name="field" value="multi:request:Cisco-AVPair:disc-cause-ext"/>
+                        <parameter name="field" value="Nas-Port-Type:0"/>
+                        <parameter name="field" value="Cisco-Nas-Port:0"/>
+                        <parameter name="field" value="NAS-PORT:0"/>
+                        <parameter name="field" value="NAS-IP-Address:0"/>
+                        <parameter name="field" value="Service-Type:0"/>
+                        <parameter name="field" value="Acct-Delay-Time:0"/>
+                        <parameter name="field" value="Proxy-Type:0"/>
+                        <parameter name="field" value="3GPP2-Correlation-ID:0"/>
+                        <parameter name="field" value="Acct-Unique-Session-Id:0"/>
+                </fields>
+        </acctrec>
+</root>
