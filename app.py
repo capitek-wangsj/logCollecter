@@ -1,11 +1,14 @@
 # coding=utf-8
 import argparse
 import json
+import random
+
 import os
 import time
 
 import pika
 import potsdb
+import requests
 
 import settings
 from utils.util_logs import read_log_file, read_log_dir
@@ -77,11 +80,18 @@ class Worker:
 
     def get_latest_log_name(self):
         # todo get the latest_log_name from one place
-        return ""
+        with open(os.path.join("log_name")) as o:
+            name = o.readline()
+            return name
 
     def save_latest_log_name(self, latest_log_name):
         # todo save the latest_log_name in one place
-        pass
+        with open(os.path.join("log_name")) as o:
+            o.write(latest_log_name)
+
+    def send_json(self, json):
+        r = requests.post("http://localhost:4242/api/put?details", json=json)
+        return r.text
 
     # 回调函数中收到通知后，做相关操作： 解析body，保存存档点，循环读取日志内容，把日志内容写入数据库
     def callback(self, ch, method, properties, body):
@@ -96,15 +106,24 @@ class Worker:
                     print '%d: Reading the file: %s' % (i, log_name)
                     logs = read_log_file(os.path.join(settings.LOG_PATH, log_name))
                     if logs:
+                        # data = []
                         for j, log in enumerate(logs):
                             if isinstance(log, dict):
                                 print '--- %d.%d: Reading the line' % (i, j)
-                                # self.db_client.log('log.metric', 100, timestamp=log.get('event_timestamp'), **log)
-                            else:
-                                print '!!! %d.%d: The content of this line [%s] is not invalid' % \
-                                      (i, j, log)
-            else:
-                print "The content of this log is empty." % body
+                                d = dict(
+                                    metric=settings.OPENTSDB_METRIC,
+                                    timestamp=log.get('event_timestamp'),
+                                    value=random.randint(0, 10000000),  # todo set what?
+                                    tags=log,
+                                )
+                                response = self.send_json(d)
+                                print 'Insert data to db. Response: %s' % response
+
+                                # self.db_client.log('metric.log', 100, timestamp=log.get('event_timestamp'), **log)
+
+                        # if data:
+                        #     response = self.send_json(data)
+                        #     print 'Insert %d data to db. Response: %s' % (len(data), response)
 
         except Exception as ex:
             print ex.message
