@@ -1,23 +1,56 @@
-import os
+import requests
 
-import potsdb
+payload = {
+    "metric": "metric.log",
+    "timestamp": '1489544891',
+    "value": '29',
+    "tags": {
+        "host": "web01",
+        "dc": "lga"
+    }
+}
 
-HOST = os.environ.get('OTSDB_TEST_HOST', '127.0.0.1')
-PORT = int(os.environ.get('OTSDB_TEST_PORT', '42424'))
+payload1 = {
+    "metric": "metric.log",
+    "timestamp": '1489544892',
+    "value": '30',
+    "tags": {
+        "host": "web01",
+        "dc": "lga"
+    }
+}
+
+payload2 = {
+    "metric": "metric.log",
+    "timestamp": '1489544893',
+    "value": '29',
+    "tags": {
+        "host": "web01",
+        "dc": "lga"
+    }
+}
+
+payload3 = {
+    "metric": "metric.log",
+    "timestamp": '1489544894',
+    "value": '30',
+    "tags": {
+        "host": "web01",
+        "dc": "lga"
+    }
+}
+
+ls = [payload, payload1, payload2, payload3]
 
 
-def _get_client(**kwargs):
-    my_kwargs = {"port": PORT, "check_host": False, "test_mode": True}
-    my_kwargs.update(kwargs)
-    return potsdb.Client(HOST, **my_kwargs)
+def send_json(json):
+    r = requests.post("http://localhost:4242/api/put?details", json=json)
+    return r.text
 
 
 def main():
-    t = _get_client(host_tag=None)
-    body = {'id': "1", "name": "wangsj", "event_timestamp": "1234567890"}
-    output = t.log('log.metric', 100, timestamp=body.get('event_timestamp'), **body)
-    print output
+    print send_json(ls)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
