@@ -6,7 +6,8 @@ SLEEP_TIME = 600
 
 OPENTSDB_HOST = 'localhost'
 OPENTSDB_PORT = 4242
-OPENTSDB_METRIC = 'metric.log'
+OPENTSDB_METRIC_INPUT = 'metric.log.input'
+OPENTSDB_METRIC_OUTPUT = 'metric.log.output'
 
 MQ_HOST = 'localhost'
 MQ_EXCHANGE = 'exchange_logs'

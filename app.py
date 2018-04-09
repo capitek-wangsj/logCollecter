@@ -1,7 +1,6 @@
 # coding=utf-8
 import argparse
 import json
-import random
 
 import os
 import time
@@ -111,13 +110,22 @@ class Worker:
                             if isinstance(log, dict):
                                 print '--- %d.%d: Reading the line' % (i, j)
                                 d = dict(
-                                    metric=settings.OPENTSDB_METRIC,
+                                    metric=settings.OPENTSDB_METRIC_INPUT,
                                     timestamp=log.get('event_timestamp'),
-                                    value=random.randint(0, 10000000),  # todo set what?
+                                    value=log.get('acct_input_octets'),
                                     tags=log,
                                 )
                                 response = self.send_json(d)
-                                print 'Insert data to db. Response: %s' % response
+                                print 'Insert input info to db. Response: %s' % response
+
+                                d = dict(
+                                    metric=settings.OPENTSDB_METRIC_OUTPUT,
+                                    timestamp=log.get('event_timestamp'),
+                                    value=log.get('acct_output_octets'),
+                                    tags=log,
+                                )
+                                response = self.send_json(d)
+                                print 'Insert out info to db. Response: %s' % response
 
                                 # self.db_client.log('metric.log', 100, timestamp=log.get('event_timestamp'), **log)
 
