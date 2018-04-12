@@ -1,3 +1,4 @@
+# coding=utf-8
 import requests
 
 payload = {
@@ -48,8 +49,19 @@ def send_json(json):
     return r.text
 
 
+def get_data_by_get(query):
+    r = requests.get("http://localhost:4242/api/query?" + query)
+    print r.json()
+    if r and r.json():
+        return r.json()[0].get('dps')
+    return []
+
 def main():
-    print send_json(ls)
+    # 写入
+    # print send_json(ls)
+
+    # 读取
+    print get_data_by_get('start=1489544891&m=sum:metric.log')
 
 
 if __name__ == "__main__":
