@@ -1,10 +1,9 @@
 # coding=utf-8
 import argparse
 import json
-
-import os
 import time
 
+import os
 import pika
 import potsdb
 import requests
@@ -12,13 +11,13 @@ import requests
 import settings
 from utils.util_logs import read_log_file, read_log_dir
 
-parser = argparse.ArgumentParser(description='provide a role name')
-parser.add_argument('--role', type=str, default=None)
-args = parser.parse_args()
-
 PUBLISHER = 'publisher'
 CONSUMER = 'consumer'
 ROLES = (PUBLISHER, CONSUMER)
+
+parser = argparse.ArgumentParser(description='provide a role name')
+parser.add_argument('--role', type=str, default='')
+args = parser.parse_args()
 
 
 class Worker:
@@ -28,7 +27,7 @@ class Worker:
             raise Exception("Invalid role: %s" % self.role)
 
         self.db_client = self.get_db_client()
-        self.connection, self.channel = self.get_mq_channel()
+        self.connection, self.channel = self.get_mq_info()
 
     def start(self):
         print "The {} is running...".format(args.role)
@@ -44,19 +43,18 @@ class Worker:
                              qsize=1000, host_tag=True,
                              mps=100, check_host=True)
 
-    def get_mq_channel(self):
+    def get_mq_info(self):
         connection = pika.BlockingConnection(pika.ConnectionParameters(host=settings.MQ_HOST))  # 创建一个连接
         channel = connection.channel()  # 创建通道
         channel.queue_declare(queue=settings.MQ_QUEUE, durable=True)  # 声明 queue
         return connection, channel
 
     def publisher(self):
-        connection, channel = self.get_mq_channel()
         try:
             while 1:
                 latest_log_name = self.get_latest_log_name()
                 log_filenames = read_log_dir(settings.LOG_PATH, latest_log_name)
-                channel.basic_publish(exchange=settings.MQ_EXCHANGE,
+                self.channel.basic_publish(exchange=settings.MQ_EXCHANGE,
                                       routing_key=settings.MQ_ROUTING_KEY,
                                       body=json.dumps(log_filenames))
                 time.sleep(settings.SLEEP_TIME)
@@ -64,28 +62,25 @@ class Worker:
         except Exception as ex:
             print ex.message
         finally:
-            connection.close()
+            self.connection.close()
 
     def consumer(self):
-        connection, channel = self.get_mq_channel()
         try:
-            channel.basic_consume(self.callback, queue=settings.MQ_QUEUE, no_ack=True)
+            self.channel.basic_consume(self.callback, queue=settings.MQ_QUEUE, no_ack=True)
             print(' [*] Waiting for messages. To exit press CTRL+C')
-            channel.start_consuming()  # 创建死循环，监听消息队列
+            self.channel.start_consuming()  # 创建死循环，监听消息队列
         except Exception as ex:
             print ex.message
         finally:
-            connection.close()
+            self.connection.close()
 
     def get_latest_log_name(self):
-        # todo get the latest_log_name from one place
         with open(os.path.join("log_name")) as o:
             name = o.readline()
             return name
 
     def save_latest_log_name(self, latest_log_name):
-        # todo save the latest_log_name in one place
-        with open(os.path.join("log_name")) as o:
+        with open(os.path.join("log_name"),'wb') as o:
             o.write(latest_log_name)
 
     def send_json(self, json):
@@ -101,20 +96,16 @@ class Worker:
             if log_names:
                 latest_log_name = log_names[0]
                 self.save_latest_log_name(latest_log_name)
+                # todo 现在是一行一行插入的， 每次插入都是一次http请求， 这样效率不高， 后面有待改进：把数据组合在一起，一次http插入所有内容
                 for i, log_name in enumerate(log_names):
                     print '%d: Reading the file: %s' % (i, log_name)
                     logs = read_log_file(os.path.join(settings.LOG_PATH, log_name))
                     if logs:
-                        # data = []
                         for j, log in enumerate(logs):
                             if isinstance(log, dict):
                                 print '--- %d.%d: Reading the line' % (i, j)
-                                d = dict(
-                                    metric=settings.OPENTSDB_METRIC_INPUT,
-                                    timestamp=log.get('event_timestamp'),
-                                    value=log.get('acct_input_octets'),
-                                    tags=log,
-                                )
+                                d = dict(metric=settings.OPENTSDB_METRIC_INPUT, timestamp=log.get('event_timestamp'),
+                                         value=log.get('acct_input_octets'), tags=log)
                                 response = self.send_json(d)
                                 print 'Insert input info to db. Response: %s' % response
 
@@ -126,12 +117,6 @@ class Worker:
                                 )
                                 response = self.send_json(d)
                                 print 'Insert out info to db. Response: %s' % response
-
-                                # self.db_client.log('metric.log', 100, timestamp=log.get('event_timestamp'), **log)
-
-                        # if data:
-                        #     response = self.send_json(data)
-                        #     print 'Insert %d data to db. Response: %s' % (len(data), response)
 
         except Exception as ex:
             print ex.message

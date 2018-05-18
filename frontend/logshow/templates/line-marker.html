@@ -1,0 +1,201 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html style="height: 100%">
+<head>
+    <meta charset="utf-8">
+    <link type="text/css" href="{% static "jquery/jquery.datetimepicker.css" %}" rel="stylesheet"/>
+    <script type="text/javascript" src="{% static "jquery/jquery.js" %}"></script>
+    <script type="text/javascript" src="{% static "jquery/jquery.datetimepicker.full.js" %}"></script>
+    <script type="text/javascript" src="{% static "echarts/echarts.min.js" %}"></script>
+    <script type="text/javascript" src="{% static "echart/echarts-gl.min.js" %}"></script>
+    <script type="text/javascript" src="{% static "echart/ecStat.min.js" %}"></script>
+    <script type="text/javascript" src="{% static "echart/dataTool.min.js" %}"></script>
+    <script type="text/javascript" src="{% static "echart/china.js" %}"></script>
+    <script type="text/javascript" src="{% static "echart/world.js" %}"></script>
+    <script type="text/javascript" src="{% static "echart/bmap.min.js" %}"></script>
+    <script type="text/javascript" src="{% static "echart/simplex.js" %}"></script>
+
+</head>
+
+<body style="height: 100%; margin: 0">
+
+<div class="search" style="height: 100px;">
+    <div class="input-group" style="margin-left: 500px; margin-top: 20px; height: 30px;">
+        <label>开始时间：</label>
+        <input id="start_time" type="text" placeholder="YYYY-MM-DD HH:MM:SS"/>
+        <label>结束时间</label>
+        <input id="end_time" type="text" placeholder="YYYY-MM-DD HH:MM:SS"/>
+        <select id='select_date' style="height:22px;">
+        <option value="">选择时间段</option>
+        <option value="one_hour">最近1小时</option>
+        <option value="two_hour">最近2小时</option>
+        <option value="four_hour">最近4小时</option>
+        <option value="one_day">最近1天</option>
+        <option value="one_week">最近一周</option>
+        </select>
+        <input type="search" id="username" placeholder="请选择一个要查询到人">
+        <button id="search" >查询</button>
+    </div>
+</div>
+
+<div id="container" style="height: 80%"></div>
+<script type="text/javascript">
+    $(function () {
+        // 初始化时间控件
+        $("#start_time").datetimepicker();
+        $("#end_time").datetimepicker();
+
+        // 渲染图表到一个div里
+        var dom = document.getElementById("container");
+        var myChart = echarts.init(dom);
+        showChart(myChart);
+
+        // 把click事件绑定到
+        $("#search").click(function () {
+            showChart(myChart);
+
+        });
+
+        $("#select_date").change(function (){
+            var value = $(this).val();
+            console.log(value);
+            var now = new Date();
+            var start_time;
+
+            switch (value){
+                case "one_hour":
+                    start_time = new Date(now - 60 * 60 * 1000);
+                    break;
+                case "two_hour":
+                    start_time = new Date(now - 2 * 60 * 60 * 1000);
+                    break;
+                case "four_hour":
+                    start_time = new Date(now - 4 * 60 * 60 * 1000);
+                    break;
+                case "one_day":
+                    start_time = new Date(now - 24 * 60 * 60 * 1000);
+                    break;
+                case "one_week":
+                    start_time = new Date(now - 134 * 60 * 60 * 1000);
+                    break;
+                default:
+                    start_time = ""
+            }
+
+            $("#start_time").val(start_time);
+            $("#end_time").val(now);
+
+            showChart(myChart);
+        })
+
+    });
+
+    function showChart(myChart) {
+        var username = $("#username").val();
+        var start_time = $("#start_time").val();
+        var end_time = $("#end_time").val();
+
+        console.log(username, start_time, end_time,);
+        
+        $.getJSON('/get_log_info', {
+            'username': username,
+            'start_time': start_time,
+            'end_time': end_time,
+
+        }, function (data) {
+            console.log(data);
+
+            option = null;
+            option = {
+                title: {
+                    text: 'vpn连接记录',
+                    subtext: '实时'
+                },
+                tooltip: {
+                    trigger: 'axis'
+                },
+                legend: {
+                    data: ['下行', '上行']
+                },
+                toolbox: {
+                    show: true,
+                    feature: {
+                        dataZoom: {
+                            yAxisIndex: 'none'
+                        },
+                        dataView: {readOnly: false},
+                        magicType: {type: ['line', 'bar']},
+                        restore: {},
+                        saveAsImage: {}
+                    }
+                },
+                xAxis: {
+                    type: 'category',
+                    boundaryGap: false,
+                    data: ['11:50', '11:55', '12:00', '12：05', '12:10', '12:15', '12:50']
+                },
+                yAxis: {
+                    type: 'value',
+                    axisLabel: {
+                        formatter: '{value} Kb/s'
+                    }
+                },
+                series: [
+                    {
+                        name: '上行速率',
+                        type: 'line',
+                        data: [60, 20, '', 13, 12, 13, 10],
+                        markPoint: {
+                            data: [
+                                {type: 'max', name: '最大值'},
+                                {type: 'min', name: '最小值'}
+                            ]
+                        },
+                        markLine: {
+                            data: [
+                                {type: 'average', name: '平均值'}
+                            ]
+                        }
+                    },
+                    {
+                        name: '下行速率',
+                        type: 'line',
+                        data: [1, 2, '', 5, 3, 2, 0],
+                        markPoint: {
+                            data: [
+                                {name: '周最低', value: -2, xAxis: 1, yAxis: -1.5}
+                            ]
+                        },
+                        markLine: {
+                            data: [
+                                {type: 'average', name: '平均值'},
+                                [{
+                                    symbol: 'none',
+                                    x: '90%',
+                                    yAxis: 'max'
+                                }, {
+                                    symbol: 'circle',
+                                    label: {
+                                        normal: {
+                                            position: 'start',
+                                            formatter: '最大值'
+                                        }
+                                    },
+                                    type: 'max',
+                                    name: '最高点'
+                                }]
+                            ]
+                        }
+                    }
+                ]
+            };
+            if (option && typeof option === "object") {
+                myChart.setOption(option, true);
+            }
+        });
+
+    }
+
+</script>
+</body>
+</html>

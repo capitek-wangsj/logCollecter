@@ -1,0 +1,236 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<!--[if IE 8]> <html lang="en" class="ie8"> <![endif]-->
+<!--[if IE 9]> <html lang="en" class="ie9"> <![endif]-->
+<!--[if !IE]><!--> <html lang="en"> <!--<![endif]-->
+<head>
+    <title>echarts案例</title>
+
+    <!-- Meta -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- Favicon -->
+    <!--<link rel="shortcut icon" href="favicon.ico">-->
+
+    <!-- Web Fonts -->
+{#    <link rel='stylesheet' type='text/css' href='//fonts.googleapis.com/css?family=Open+Sans:400,300,600&amp;subset=cyrillic,latin'>#}
+
+    <!-- CSS Global Compulsory -->
+    <!--<link rel="stylesheet" href="assets/plugins/bootstrap/css/bootstrap.min.css">-->
+    <!--<link rel="stylesheet" href="assets/css/style.css">-->
+
+    <!-- CSS Header and Footer -->
+    <!--<link rel="stylesheet" href="assets/css/headers/header-default.css">-->
+    <!--<link rel="stylesheet" href="assets/css/footers/footer-v1.css">-->
+
+    <!-- CSS Implementing Plugins -->
+    <!--<link rel="stylesheet" href="assets/plugins/animate.css">-->
+    <!--<link rel="stylesheet" href="assets/plugins/line-icons/line-icons.css">-->
+    <!--<link rel="stylesheet" href="assets/plugins/font-awesome/css/font-awesome.min.css">-->
+
+    <!-- CSS Page Style -->
+    <!--<link rel="stylesheet" href="assets/css/pages/blog_masonry_3col.css">-->
+
+    <!-- CSS Theme -->
+    <!--<link rel="stylesheet" href="assets/css/theme-colors/default.css" id="style_color">-->
+    <!--<link rel="stylesheet" href="assets/css/theme-skins/dark.css">-->
+
+    <!-- CSS Customization -->
+    <!--<link rel="stylesheet" href="assets/css/custom.css">-->
+
+    <style>
+        .conn{
+            width: 1000px;
+            line-height: 30px;
+            margin: 0 auto 20px auto;
+            padding: 0 2px;
+            clear: both;
+            background-color: #c0c0c0;
+        }
+        #echartsJs{
+            width: 1000px;
+            height: 500px;
+        }
+        .echartsJs{
+            margin:0 auto;
+        }
+        #username_label.labels{
+            width: 400px;
+        }
+        .labels{
+            display: inline-block;
+            width: 200px;
+        }
+        #username{
+            display: block;
+            width: 100%;
+            height: 26px;
+            text-indent: 2px;
+        }
+        #time_label{
+            float: right;
+            width: auto;
+            height:30px;
+        }
+        .input_style{
+            display: inline-block;
+            width: 200px;
+            height: 26px;
+            text-indent: 2px;
+        }
+        #echartsJson{
+            width: 400px;
+            height: 250px;
+        }
+        #echartsAjax{
+            width: 400px;
+            height: 250px;
+        }
+    </style>
+
+</head>
+
+
+
+<body class="index-page" data-page="index">
+    <h2 style="text-align: center;">测试</h2>
+
+    <div class="conn" >
+        <form id="searchform" action="" method="POST">
+            {% csrf_token %}
+            <div style="clear: both;">
+                <label for="username" id="username_label" class="labels">
+                    <input type="text" name="username" value="" placeholder="输入查找人的姓名" id="username">
+                </label>
+
+                <label for="" id="time_label" class="labels">
+<input type="datetime-local" step=1 name="start" value="" placeholder="开始时间" id="start_time" class="input_style" >
+                    --
+<input type="datetime-local" step=1 name="end" value="" placeholder="截止时间" id="end_time" class="input_style" >
+                </label>
+            </div>
+
+            {% if errors %}
+                <p>{{ errors }}</p>
+            {% endif%}
+            <button type="button" id="btn_search" onclick="search()" style="display:block;width: 60px;height: 30px;margin: 0 auto;cursor: pointer;">搜索</button>
+
+        </form>
+
+    </div>
+
+
+    <div id="echartsJs" class="echartsJs"></div>
+
+
+
+
+<!-- JS Global Compulsory -->
+<script type="text/javascript" src="/static/plugins/jquery.js"></script>
+<script type="text/javascript" src="/static/plugins/esl.js"></script>
+<script type="text/javascript" src="/static/plugins/echarts-all.js"></script>
+<script type="text/javascript" src="/static/plugins/echarts.js"></script>
+
+    <script>
+        //设置表单中的初始时间，比当前时间多一小时
+        var now = new Date();
+        console.log(now);
+        now.setHours(now.getHours() + 1);
+        var str = now.getFullYear() + "-" + fix((now.getMonth() + 1), 2) + "-" + fix(now.getDate(), 2) + "T" + fix(now.getHours(), 2) + ":" + fix(now.getMinutes(), 2) + ':' + fix(now.getSeconds(), 2);
+        $("#start_time").val(str);
+
+        //将日期格式化为两位，不足补零
+        function fix(num, length) {
+            return ('' + num).length < length ? ((new Array(length + 1)).join('0') + num).slice(-length) : '' + num;
+        }
+
+        function search() {
+            //将datetime-local转换为Date
+            x = $("#start_time").val();
+            now.setFullYear(parseInt(x.substring(0, 4)));
+            now.setMonth(parseInt(x.substring(5, 7)) - 1);
+            now.setDate(parseInt(x.substring(8, 10)));
+            now.setHours(parseInt(x.substring(11, 13)));
+            now.setMinutes(parseInt(x.substring(14, 16)));
+            now.setSeconds(parseInt(x.substring(17, 19)));
+
+            //获取表单数据，并序列化
+            var formData = $("#searchform").serializeArray();
+
+            //将序列化数据转为对象
+            var formObject = {};
+            for (var item in formData) {
+                formObject[formData[item].name] = formData[item].value;
+            }
+            formObject.startDate = now;
+            var formJSON = JSON.stringify(formObject);
+
+            //发送到服务器
+            $.ajax({
+                type: "POST",
+                url: "/operateTSDB/index",
+                contentType: 'application/json',
+                data: formJSON,
+                dataType: "json",
+                success: function (data) {
+                    console.log('数据成功' + data);
+                },
+                error: function (error) {
+                    console.log('失败提示' + error);
+                }
+            });
+        }
+
+
+
+    </script>
+
+    <script type="text/javascript">
+
+            var myChar = echarts.init(document.getElementById('echartsJs'));
+            var option = {
+                tooltip : {
+                    trigger: 'axis'
+                },
+                legend: {
+                    data:['send上行线','receive下行线']
+                },
+                calculable : true,
+                xAxis : [
+                    {
+                        type : 'category',
+                        boundaryGap : false,
+                        data : ['2018-01-01','2018-01-02','2018-01-03','2018-01-04','2018-01-05','2018-01-06','2018-01-07']
+                    }
+                ],
+                yAxis :
+                    {
+                        type : 'value',
+                        min: 0,
+                        max: 1000,
+                        splitArea:{
+                            show:true
+                        }
+                    },
+                series : [
+                    {
+                        name:'send',
+                        type:'line',
+                        stack: '总量',
+                        data:[120, 132, 101, 134, 90, 230, 210]
+                    },
+                    {
+                        name:'receive',
+                        type:'line',
+                        stack: '总量',
+                        data:[220, 182, 191, 234, 290, 330, 310]
+                    }
+                ]};
+            myChar.setOption(option);
+
+    </script>
+</body>
+</html>
